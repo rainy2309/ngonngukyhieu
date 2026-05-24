@@ -1,4 +1,8 @@
+"use client";
+
 import { vocabularyData } from "@/data/vocabularyData";
+import { createClient, hasSupabaseEnv } from "@/lib/supabase/client";
+import { saveBestQuizScore } from "@/lib/progress";
 import type { QuizMode, QuizQuestion } from "@/types/quiz";
 
 function shuffle<T>(items: T[]) {
@@ -49,4 +53,51 @@ export function createQuizQuestions(category: string, count: number): QuizQuesti
       exampleSentence: item.exampleSentence,
     };
   });
+}
+
+async function getUserId() {
+  if (!hasSupabaseEnv()) return null;
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
+export async function saveQuizAttempt(category: string, score: number, totalQuestions: number) {
+  saveBestQuizScore(score);
+  const userId = await getUserId();
+  if (!userId) return;
+
+  const supabase = createClient();
+  const { error } = await supabase.from("quiz_attempts").insert({
+    user_id: userId,
+    category,
+    score,
+    total_questions: totalQuestions,
+  });
+
+  if (error) throw new Error("Không thể lưu tiến độ. Vui lòng thử lại.");
+}
+
+export async function getBestQuizScore() {
+  const userId = await getUserId();
+  if (!userId) return Number(window.localStorage.getItem("silentBridge.bestQuizScore") ?? 0);
+
+  const supabase = createClient();
+  const { data, error } = await supabase.from("quiz_attempts").select("score").eq("user_id", userId).order("score", { ascending: false }).limit(1).maybeSingle();
+
+  if (error) throw new Error("Không thể tải dữ liệu học tập.");
+  return data?.score ?? 0;
+}
+
+export async function getQuizHistory() {
+  const userId = await getUserId();
+  if (!userId) return [];
+
+  const supabase = createClient();
+  const { data, error } = await supabase.from("quiz_attempts").select("id,category,score,total_questions,created_at").eq("user_id", userId).order("created_at", { ascending: false });
+
+  if (error) throw new Error("Không thể tải dữ liệu học tập.");
+  return data ?? [];
 }

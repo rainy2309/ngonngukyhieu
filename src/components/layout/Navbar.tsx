@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Brain, Home, Info, Layers, Megaphone, Menu, Search, Users } from "lucide-react";
+import { BookOpen, Brain, Home, Info, Layers, Megaphone, Menu, Search, UserRound, Users } from "lucide-react";
+import { AuthNav } from "@/components/auth/AuthNav";
 
 const links = [
   { href: "/", label: "Trang chủ", icon: Home },
@@ -11,6 +12,7 @@ const links = [
   { href: "/community", label: "Cộng đồng", icon: Users },
   { href: "/campaign", label: "Chiến dịch", icon: Megaphone },
   { href: "/about", label: "Dự án", icon: Info },
+  { href: "/profile", label: "Hồ sơ", icon: UserRound },
 ];
 
 export function Navbar() {
@@ -33,6 +35,7 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <AuthNav />
         </div>
         <div className="flex items-center gap-2 lg:hidden" aria-label="Menu thu gọn">
           <Menu className="h-6 w-6 text-slate-700" aria-hidden="true" />
@@ -44,6 +47,7 @@ export function Navbar() {
             {link.label}
           </Link>
         ))}
+        <AuthNav />
       </div>
     </header>
   );

@@ -6,12 +6,14 @@ import { Flashcard } from "@/components/learning/Flashcard";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { categories, vocabularyData } from "@/data/vocabularyData";
-import { setWordForReview, setWordLearned } from "@/lib/progress";
+import { markWordForReview, markWordLearned } from "@/lib/progress";
 
 export default function FlashcardsPage() {
   const [category, setCategory] = useState("Tất cả");
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const cards = useMemo(() => category === "Tất cả" ? vocabularyData : vocabularyData.filter((item) => item.category === category), [category]);
   const current = cards[index % cards.length];
@@ -20,6 +22,24 @@ export default function FlashcardsPage() {
   function nextCard() {
     setIndex((value) => (value + 1) % cards.length);
     setFlipped(false);
+  }
+
+  async function saveProgress(status: "learned" | "review") {
+    setSaving(true);
+    setMessage("");
+
+    try {
+      if (status === "learned") {
+        await markWordLearned(current.id);
+      } else {
+        await markWordForReview(current.id);
+      }
+      nextCard();
+    } catch {
+      setMessage("Không thể lưu tiến độ. Vui lòng thử lại.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -38,13 +58,14 @@ export default function FlashcardsPage() {
         </label>
         <div className="self-end rounded-xl bg-white px-4 py-3 font-bold text-slate-700 shadow-sm">Thẻ {index + 1} / {cards.length}</div>
       </div>
+      {message ? <p className="mb-5 rounded-2xl bg-orange-50 p-4 font-semibold text-orange-900">{message}</p> : null}
       <Progress value={progress} className="mb-5" />
       <Flashcard item={current} flipped={flipped} onFlip={() => setFlipped((value) => !value)} />
       <div className="mt-5 grid gap-3 sm:grid-cols-4">
-        <Button variant="secondary" onClick={() => setFlipped((value) => !value)}><RotateCcw className="h-5 w-5" /> Lật thẻ</Button>
-        <Button variant="success" onClick={() => { setWordLearned(current.id); nextCard(); }}><CheckCircle2 className="h-5 w-5" /> Biết rồi</Button>
-        <Button variant="warning" onClick={() => { setWordForReview(current.id); nextCard(); }}>Cần ôn lại</Button>
-        <Button onClick={nextCard}>Từ tiếp theo <ArrowRight className="h-5 w-5" /></Button>
+        <Button variant="secondary" onClick={() => setFlipped((value) => !value)} disabled={saving}><RotateCcw className="h-5 w-5" /> Lật thẻ</Button>
+        <Button variant="success" onClick={() => void saveProgress("learned")} disabled={saving}><CheckCircle2 className="h-5 w-5" /> Biết rồi</Button>
+        <Button variant="warning" onClick={() => void saveProgress("review")} disabled={saving}>Cần ôn lại</Button>
+        <Button onClick={nextCard} disabled={saving}>Từ tiếp theo <ArrowRight className="h-5 w-5" /></Button>
       </div>
     </main>
   );

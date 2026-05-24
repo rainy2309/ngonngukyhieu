@@ -7,8 +7,7 @@ import { QuizResult } from "@/components/quiz/QuizResult";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { categories } from "@/data/vocabularyData";
-import { createQuizQuestions } from "@/lib/quiz";
-import { saveBestQuizScore } from "@/lib/progress";
+import { createQuizQuestions, saveQuizAttempt } from "@/lib/quiz";
 import type { QuizAnswer, QuizQuestion } from "@/types/quiz";
 
 export default function QuizPage() {
@@ -18,6 +17,7 @@ export default function QuizPage() {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [message, setMessage] = useState("");
 
   const current = questions[index];
   const done = questions.length > 0 && answers.length === questions.length;
@@ -28,14 +28,23 @@ export default function QuizPage() {
     setAnswers([]);
     setIndex(0);
     setSelected(null);
+    setMessage("");
   }
 
-  function answerQuestion(answer: string) {
+  async function answerQuestion(answer: string) {
     if (!current || selected) return;
     setSelected(answer);
     const nextAnswers = [...answers, { question: current, selectedAnswer: answer, isCorrect: answer === current.correctAnswer }];
     setAnswers(nextAnswers);
-    if (nextAnswers.length === questions.length) saveBestQuizScore(Math.round((nextAnswers.filter((item) => item.isCorrect).length / questions.length) * 100));
+
+    if (nextAnswers.length === questions.length) {
+      const finalScore = Math.round((nextAnswers.filter((item) => item.isCorrect).length / questions.length) * 100);
+      try {
+        await saveQuizAttempt(category, finalScore, questions.length);
+      } catch {
+        setMessage("Không thể lưu tiến độ. Vui lòng thử lại.");
+      }
+    }
   }
 
   function nextQuestion() {
@@ -60,7 +69,12 @@ export default function QuizPage() {
   }
 
   if (done) {
-    return <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8"><QuizResult answers={answers} onRestart={() => { setQuestions([]); setAnswers([]); setSelected(null); }} /></main>;
+    return (
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+        {message ? <p className="mb-5 rounded-2xl bg-orange-50 p-4 font-semibold text-orange-900">{message}</p> : null}
+        <QuizResult answers={answers} onRestart={() => { setQuestions([]); setAnswers([]); setSelected(null); setMessage(""); }} />
+      </main>
+    );
   }
 
   return (
@@ -70,7 +84,7 @@ export default function QuizPage() {
         <Button variant="secondary" onClick={() => setQuestions([])}>Đổi chủ đề</Button>
       </div>
       <Progress value={(index / questions.length) * 100} className="mb-5" />
-      <QuizCard question={current} selected={selected} onAnswer={answerQuestion} />
+      <QuizCard question={current} selected={selected} onAnswer={(answer) => void answerQuestion(answer)} />
       {selected ? <Button className="mt-5 w-full sm:w-auto" onClick={nextQuestion}>Câu tiếp theo <ArrowRight className="h-5 w-5" /></Button> : null}
     </main>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookOpen, ClipboardList, Layers, Search } from "lucide-react";
+import { AuthNav } from "@/components/auth/AuthNav";
 
 const quickLinks = [
   { href: "/dictionary", label: "Tra từ", icon: Search },
@@ -19,6 +20,9 @@ export function Sidebar() {
             {link.label}
           </Link>
         ))}
+      </div>
+      <div className="mt-4 border-t border-slate-200 pt-4">
+        <AuthNav />
       </div>
     </aside>
   );
