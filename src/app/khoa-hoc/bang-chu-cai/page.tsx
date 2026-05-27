@@ -1,95 +1,229 @@
 "use client";
 
-import { useState } from "react";
-import { CheckCircle2, Eye, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Bookmark, Check, CheckCircle2, ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { alphabetSignData, type AlphabetSignItem } from "@/data/alphabetSignData";
 import { learningStorageKeys, saveLearningItem } from "@/lib/localLearning";
 
-const letters = ["A", "Ă", "Â", "B", "C", "D", "Đ", "E", "Ê", "G", "H", "I", "K", "L", "M", "N", "O", "Ô", "Ơ", "P", "Q", "R", "S", "T", "U", "Ư", "V", "X", "Y"];
+const learnedAlphabetKey = "cham_learned_alphabet";
+const learnedSignsKey = "cham_learned_signs";
+const favoriteSignsKey = "cham_favorite_signs";
+
+function readStringArray(key: string) {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(key) ?? "[]") as unknown;
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map((item) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object") {
+          const record = item as Record<string, unknown>;
+          return String(record.id ?? record.label ?? "");
+        }
+        return "";
+      })
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function saveUniqueString(key: string, id: string) {
+  if (typeof window === "undefined") return [];
+
+  const next = Array.from(new Set([id, ...readStringArray(key)]));
+  window.localStorage.setItem(key, JSON.stringify(next));
+  return next;
+}
 
 function saveViewedCourse() {
-  saveLearningItem(learningStorageKeys.viewedLessons, { id: "khoa-hoc-bang-chu-cai", label: "Ký hiệu bảng chữ cái" });
+  saveLearningItem(learningStorageKeys.viewedLessons, { id: "bang-chu-cai", label: "Ký hiệu bảng chữ cái" });
+}
+
+function MediaPlaceholder({ item }: { item: AlphabetSignItem }) {
+  return (
+    <div className="aspect-video w-full rounded-[1.75rem] border border-dashed border-blue-200 bg-blue-50 p-5 text-center text-blue-900 shadow-inner">
+      <div className="flex h-full flex-col items-center justify-center gap-3">
+        <PlayCircle className="h-10 w-10 text-blue-600" aria-hidden="true" />
+        <p className="text-base font-black sm:text-lg">{item.videoPlaceholder}</p>
+        <p className="max-w-md text-xs font-semibold leading-6 text-slate-500 sm:text-sm">Nội dung minh họa sẽ được nhóm bổ sung hoặc xác minh ở giai đoạn sau.</p>
+      </div>
+    </div>
+  );
 }
 
 export default function AlphabetCoursePage() {
-  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [learned, setLearned] = useState<string[]>([]);
+  const [selectedId, setSelectedId] = useState(alphabetSignData[0]?.id ?? "");
+  const [learnedIds, setLearnedIds] = useState<string[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const detailRef = useRef<HTMLDivElement | null>(null);
 
-  function markLearned(letter: string) {
+  useEffect(() => {
+    setLearnedIds(readStringArray(learnedAlphabetKey));
+    setFavoriteIds(readStringArray(favoriteSignsKey));
     saveViewedCourse();
-    saveLearningItem(learningStorageKeys.learned, { id: `letter-${letter}`, label: `Chữ ${letter}` });
-    setLearned((current) => (current.includes(letter) ? current : [letter, ...current]));
+  }, []);
+
+  const selectedIndex = useMemo(() => alphabetSignData.findIndex((item) => item.id === selectedId), [selectedId]);
+  const selectedItem = alphabetSignData[selectedIndex] ?? alphabetSignData[0];
+  const totalLetters = alphabetSignData.length;
+
+  function selectLetter(id: string, shouldScroll = true) {
+    setSelectedId(id);
+    if (shouldScroll) {
+      window.setTimeout(() => {
+        detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   }
 
-  function openDetail(letter: string) {
-    saveViewedCourse();
-    setSelectedLetter(letter);
+  function markLearned() {
+    const next = saveUniqueString(learnedAlphabetKey, selectedItem.id);
+    saveUniqueString(learnedSignsKey, `alphabet-${selectedItem.id}`);
+    setLearnedIds(next);
   }
+
+  function saveFavorite() {
+    const next = saveUniqueString(favoriteSignsKey, selectedItem.id);
+    setFavoriteIds(next);
+  }
+
+  function goToIndex(index: number) {
+    const next = alphabetSignData[index];
+    if (next) selectLetter(next.id);
+  }
+
+  if (!alphabetSignData.length) {
+    return (
+      <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="mx-auto max-w-4xl rounded-[2rem] border border-blue-100 bg-white p-6 text-center font-bold text-blue-900 shadow-xl shadow-blue-100/60">Chưa có dữ liệu bảng chữ cái.</div>
+      </main>
+    );
+  }
+
+  const selectedIsLearned = learnedIds.includes(selectedItem.id);
+  const selectedIsFavorite = favoriteIds.includes(selectedItem.id);
 
   return (
     <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-7xl">
-        <div className="max-w-3xl">
-          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ký hiệu bảng chữ cái</h1>
-          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Học ký hiệu từng chữ cái để làm nền tảng cho việc ghép từ.</p>
+        <div className="grid gap-5 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-xl shadow-blue-100/60 sm:p-7 lg:grid-cols-[1.4fr_auto] lg:items-center">
+          <div>
+            <p className="text-sm font-black uppercase text-blue-600">Khóa học</p>
+            <h1 className="mt-2 text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ký hiệu bảng chữ cái</h1>
+            <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Chọn một chữ cái để xem minh họa ký hiệu, cách thực hiện và ghi chú học tập.</p>
+          </div>
+          <div className="rounded-[1.5rem] bg-blue-50 px-5 py-4 text-blue-900">
+            <p className="text-sm font-black uppercase">Tiến độ</p>
+            <p className="mt-1 text-2xl font-black">Đã học: {learnedIds.length} / {totalLetters} chữ</p>
+          </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 min-[390px]:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-          {letters.map((letter) => (
-            <article key={letter} className="rounded-[1.75rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-5xl font-black text-blue-700">{letter}</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-600">Ký hiệu minh họa cho chữ {letter}.</p>
-                </div>
-                {learned.includes(letter) ? <CheckCircle2 className="h-6 w-6 text-emerald-600" aria-label="Đã học" /> : null}
-              </div>
-              <div className="mt-4 aspect-video rounded-3xl border border-dashed border-blue-200 bg-blue-50 p-4 text-center">
-                <p className="font-black text-blue-800">GIF/Video minh họa ký hiệu chữ {letter}</p>
-                <p className="mt-2 text-xs font-semibold text-slate-500">Nội dung minh họa sẽ được nhóm bổ sung hoặc xác minh ở giai đoạn sau.</p>
-              </div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <Button variant="secondary" className="w-full rounded-full" onClick={() => openDetail(letter)}>
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                  Xem ký hiệu
-                </Button>
-                <Button className="w-full rounded-full" onClick={() => markLearned(letter)}>
-                  Đã học
-                </Button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+        <div className="mt-6 rounded-[2rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50 sm:p-5">
+          <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0" aria-label="Chọn chữ cái">
+            {alphabetSignData.map((item) => {
+              const active = item.id === selectedItem.id;
+              const learned = learnedIds.includes(item.id);
 
-      {selectedLetter ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/40 px-3">
-          <section className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-[1.5rem] bg-white p-4 shadow-2xl sm:rounded-[2rem] sm:p-6">
-            <div className="flex items-start justify-between gap-4">
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-label={`Xem ký hiệu chữ ${item.letter}`}
+                  aria-pressed={active}
+                  onClick={() => selectLetter(item.id)}
+                  className={`relative flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border px-4 text-base font-black transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 ${
+                    active ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-100" : "border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
+                  }`}
+                >
+                  {item.letter}
+                  {learned ? (
+                    <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-emerald-500 text-white ring-2 ring-white" aria-label="Đã học">
+                      <Check className="h-3 w-3" aria-hidden="true" />
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div ref={detailRef} className="scroll-mt-28">
+          <section className="mt-6 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-xl shadow-blue-100/60 sm:p-7">
+            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
               <div>
-                <p className="text-sm font-black uppercase text-blue-600">Chi tiết ký hiệu</p>
-                <h2 className="mt-1 text-3xl font-black text-slate-950 sm:text-4xl">Chữ {selectedLetter}</h2>
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-7xl font-black leading-none text-blue-700 sm:text-8xl">{selectedItem.letter}</p>
+                    <h2 className="mt-3 text-2xl font-black text-slate-950 sm:text-3xl">{selectedItem.title}</h2>
+                  </div>
+                  {selectedIsLearned ? <CheckCircle2 className="h-9 w-9 shrink-0 text-emerald-600" aria-label="Đã học" /> : null}
+                </div>
+                <MediaPlaceholder item={selectedItem} />
               </div>
-              <Button variant="ghost" className="h-11 w-11 rounded-full p-0" onClick={() => setSelectedLetter(null)} aria-label="Đóng">
-                <X className="h-5 w-5" aria-hidden="true" />
-              </Button>
-            </div>
-            <div className="mt-5 aspect-video rounded-3xl border border-dashed border-blue-200 bg-blue-50 p-5 text-center">
-              <p className="font-black text-blue-800">GIF/Video minh họa ký hiệu chữ {selectedLetter}</p>
-              <p className="mt-2 text-sm font-semibold text-slate-500">Minh họa cách tạo ký hiệu cho chữ này sẽ được nhóm bổ sung sau.</p>
-            </div>
-            <p className="mt-4 rounded-2xl bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-900">Ký hiệu minh họa trong bản demo cần được xác minh bởi nguồn chuyên môn.</p>
-            <div className="mt-5 grid gap-2 sm:flex sm:justify-end">
-              <Button variant="outline" className="w-full rounded-full sm:w-auto" onClick={() => setSelectedLetter(null)}>
-                Đóng
-              </Button>
-              <Button className="w-full rounded-full sm:w-auto" onClick={() => markLearned(selectedLetter)}>
-                Đã học
-              </Button>
+
+              <div className="grid gap-5">
+                <div className="flex flex-wrap gap-2">
+                  <Badge>{selectedItem.category}</Badge>
+                  <Badge className="bg-emerald-50 text-emerald-800 ring-emerald-100">Cơ bản</Badge>
+                  {selectedIsFavorite ? <Badge className="bg-orange-50 text-orange-800 ring-orange-100">Đã lưu yêu thích</Badge> : null}
+                </div>
+
+                <section>
+                  <h3 className="text-xl font-black text-slate-950">Mô tả ngắn</h3>
+                  <p className="mt-2 rounded-2xl bg-slate-50 p-4 text-sm font-semibold leading-7 text-slate-700 sm:text-base">{selectedItem.description}</p>
+                </section>
+
+                <section>
+                  <h3 className="text-xl font-black text-slate-950">Cách thực hiện</h3>
+                  <ul className="mt-3 grid gap-2">
+                    {selectedItem.instructions.map((instruction) => (
+                      <li key={instruction} className="rounded-2xl bg-blue-50 p-3 text-sm font-semibold leading-6 text-blue-900 sm:text-base">
+                        {instruction}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-xl font-black text-slate-950">Lưu ý khi học</h3>
+                  <ul className="mt-3 grid gap-2">
+                    {selectedItem.tips.map((tip) => (
+                      <li key={tip} className="rounded-2xl bg-orange-50 p-3 text-sm font-semibold leading-6 text-orange-900 sm:text-base">
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Button className="w-full rounded-full" onClick={markLearned}>
+                    <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                    Đánh dấu đã học
+                  </Button>
+                  <Button variant="secondary" className="w-full rounded-full" onClick={saveFavorite}>
+                    <Bookmark className={selectedIsFavorite ? "h-5 w-5 fill-blue-700" : "h-5 w-5"} aria-hidden="true" />
+                    Lưu yêu thích
+                  </Button>
+                  <Button variant="outline" className="w-full rounded-full" disabled={selectedIndex <= 0} onClick={() => goToIndex(selectedIndex - 1)}>
+                    <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                    Chữ trước
+                  </Button>
+                  <Button variant="outline" className="w-full rounded-full" disabled={selectedIndex >= totalLetters - 1} onClick={() => goToIndex(selectedIndex + 1)}>
+                    Chữ tiếp theo
+                    <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </section>
         </div>
-      ) : null}
+      </section>
     </main>
   );
 }
