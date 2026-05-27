@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChevronDown, Home, Menu, Search, Users } from "lucide-react";
+import { useState } from "react";
+import { BookOpen, ChevronDown, Home, Menu, Search, Users, X } from "lucide-react";
 import { AuthNav } from "@/components/auth/AuthNav";
 import { ChamLogo } from "@/components/common/ChamLogo";
 
@@ -19,35 +20,9 @@ const courseLinks = [
   { href: "/khoa-hoc/ngu-phap-ky-hieu", label: "Ngữ pháp ký hiệu" },
 ];
 
-function CourseDropdown({ mobile = false }: { mobile?: boolean }) {
+function DesktopCourseDropdown() {
   const pathname = usePathname();
   const active = pathname === "/khoa-hoc" || pathname.startsWith("/khoa-hoc/");
-
-  if (mobile) {
-    return (
-      <details className="group shrink-0">
-        <summary
-          className={`flex cursor-pointer list-none items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-black ${
-            active ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-700"
-          }`}
-        >
-          <BookOpen className="h-4 w-4" aria-hidden="true" />
-          Khóa học
-          <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
-        </summary>
-        <div className="mt-2 grid min-w-64 gap-1 rounded-3xl border border-blue-100 bg-white p-2 shadow-xl shadow-blue-100/60">
-          <Link className="whitespace-nowrap rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700" href="/khoa-hoc">
-            Tổng quan khóa học
-          </Link>
-          {courseLinks.map((link) => (
-            <Link key={link.href} className="whitespace-nowrap rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700" href={link.href}>
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </details>
-    );
-  }
 
   return (
     <div className="group relative shrink-0">
@@ -74,80 +49,127 @@ function CourseDropdown({ mobile = false }: { mobile?: boolean }) {
 
 export function Navbar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  function isActive(href: string) {
+    return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+  }
+
+  function closeMenu() {
+    setOpen(false);
+  }
 
   return (
     <header className="sticky top-0 z-40 px-3 py-3">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full border border-blue-100 bg-white/95 px-4 py-3 shadow-xl shadow-blue-100/60 backdrop-blur"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-[1.75rem] border border-blue-100 bg-white/95 px-4 py-3 shadow-xl shadow-blue-100/60 backdrop-blur lg:rounded-full"
         aria-label="Điều hướng chính"
       >
-        <Link href="/" className="flex shrink-0 items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">
-          <ChamLogo />
-          <span className="hidden sm:block">
-            <span className="block whitespace-nowrap text-2xl font-black leading-none text-blue-700">CHẠM</span>
-            <span className="block whitespace-nowrap text-xs font-bold text-slate-500">Kết nối bằng ngôn ngữ ký hiệu</span>
+        <Link href="/" onClick={closeMenu} className="flex min-w-0 shrink-0 items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">
+          <ChamLogo className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
+          <span className="block min-w-0">
+            <span className="block whitespace-nowrap text-xl font-black leading-none text-blue-700 sm:text-2xl">CHẠM</span>
+            <span className="hidden whitespace-nowrap text-xs font-bold text-slate-500 sm:block">Kết nối bằng ngôn ngữ ký hiệu</span>
           </span>
         </Link>
 
         <div className="hidden min-w-0 items-center gap-1 lg:flex">
-          {mainLinks.slice(0, 2).map((link) => {
-            const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(`${link.href}/`));
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-black transition ${
-                  active ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:text-blue-700"
-                }`}
-              >
-                <link.icon className="h-4 w-4" aria-hidden="true" />
-                {link.label}
-              </Link>
-            );
-          })}
-          <CourseDropdown />
-          {mainLinks.slice(2).map((link) => {
-            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-black transition ${
-                  active ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:text-blue-700"
-                }`}
-              >
-                <link.icon className="h-4 w-4" aria-hidden="true" />
-                {link.label}
-              </Link>
-            );
-          })}
+          {mainLinks.slice(0, 2).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-black transition ${
+                isActive(link.href) ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:text-blue-700"
+              }`}
+            >
+              <link.icon className="h-4 w-4" aria-hidden="true" />
+              {link.label}
+            </Link>
+          ))}
+          <DesktopCourseDropdown />
+          {mainLinks.slice(2).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-black transition ${
+                isActive(link.href) ? "border-blue-600 text-blue-700" : "border-transparent text-slate-600 hover:text-blue-700"
+              }`}
+            >
+              <link.icon className="h-4 w-4" aria-hidden="true" />
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <div className="hidden shrink-0 lg:block">
           <AuthNav />
         </div>
 
-        <Menu className="h-5 w-5 text-blue-700 lg:hidden" aria-hidden="true" />
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 lg:hidden"
+          aria-label={open ? "Đóng menu" : "Mở menu"}
+          aria-expanded={open}
+        >
+          {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+        </button>
       </nav>
 
-      <div className="mx-auto mt-3 flex max-w-7xl gap-2 overflow-x-auto rounded-full border border-blue-100 bg-white px-3 py-2 shadow-lg shadow-blue-100/50 lg:hidden">
-        {mainLinks.slice(0, 2).map((link) => {
-          const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(`${link.href}/`));
-          return (
-            <Link key={link.href} href={link.href} className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-black ${active ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-700"}`}>
-              {link.label}
+      {open ? (
+        <div className="mx-auto mt-3 max-w-7xl rounded-[1.75rem] border border-blue-100 bg-white p-3 shadow-2xl shadow-blue-100/70 lg:hidden">
+          <div className="grid gap-1">
+            {mainLinks.slice(0, 2).map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-2xl px-4 text-sm font-black ${
+                  isActive(link.href) ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-800"
+                }`}
+              >
+                <link.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                {link.label}
+              </Link>
+            ))}
+
+            <div className="rounded-2xl bg-blue-50 p-2">
+              <Link
+                href="/khoa-hoc"
+                onClick={closeMenu}
+                className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-3 text-sm font-black ${
+                  pathname.startsWith("/khoa-hoc") ? "bg-blue-600 text-white" : "text-blue-800"
+                }`}
+              >
+                <BookOpen className="h-4 w-4 shrink-0" aria-hidden="true" />
+                Khóa học
+              </Link>
+              <div className="mt-1 grid gap-1 pl-4">
+                {courseLinks.map((link) => (
+                  <Link key={link.href} href={link.href} onClick={closeMenu} className="min-h-11 whitespace-nowrap rounded-xl px-3 py-3 text-sm font-bold text-slate-700 hover:bg-white hover:text-blue-700">
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <Link
+              href="/cong-dong"
+              onClick={closeMenu}
+              className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-2xl px-4 text-sm font-black ${
+                pathname.startsWith("/cong-dong") ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-800"
+              }`}
+            >
+              <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
+              Cộng đồng
             </Link>
-          );
-        })}
-        <CourseDropdown mobile />
-        <Link
-          href="/cong-dong"
-          className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-black ${pathname.startsWith("/cong-dong") ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-700"}`}
-        >
-          Cộng đồng
-        </Link>
-        <AuthNav />
-      </div>
+          </div>
+
+          <div className="mt-3 border-t border-blue-100 pt-3">
+            <AuthNav />
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }

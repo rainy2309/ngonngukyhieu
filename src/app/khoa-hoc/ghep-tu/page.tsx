@@ -44,11 +44,11 @@ export default function WordBuilderPage() {
   const tones = detectTones(submittedWord);
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-black text-slate-950">Ghép từ</h1>
-          <p className="mt-4 text-lg font-semibold leading-8 text-slate-600">Luyện ghép các chữ cái và dấu tiếng Việt để tạo thành từ.</p>
+          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ghép từ</h1>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Luyện ghép các chữ cái và dấu tiếng Việt để tạo thành từ.</p>
         </div>
 
         <div className="mt-8 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-xl shadow-blue-100/50 md:p-6">
@@ -56,7 +56,7 @@ export default function WordBuilderPage() {
             <span className="font-black text-slate-900">Nhập từ hoặc cụm từ ngắn</span>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Input value={word} onChange={(event) => setWord(event.target.value)} placeholder="Ví dụ: mẹ, ăn, cảm ơn" className="min-h-12 text-base" />
-              <Button onClick={() => practice()} className="min-h-12 rounded-full">
+              <Button onClick={() => practice()} className="min-h-12 w-full rounded-full sm:w-auto">
                 <Keyboard className="h-5 w-5" aria-hidden="true" />
                 Ghép từ
               </Button>
@@ -71,7 +71,7 @@ export default function WordBuilderPage() {
             <Sparkles className="h-5 w-5 text-blue-700" aria-hidden="true" />
             <h2 className="text-2xl font-black text-slate-950">Kết quả ghép từ: “{submittedWord}”</h2>
           </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-4 grid grid-cols-1 gap-4 min-[390px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {letters.map((letter, index) => (
               <article key={`${letter}-${index}`} className="rounded-[1.5rem] border border-blue-100 bg-white p-4 text-center shadow-lg shadow-blue-100/50">
                 <p className="text-4xl font-black text-blue-700">{letter}</p>

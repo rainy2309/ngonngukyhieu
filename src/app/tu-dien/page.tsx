@@ -88,16 +88,16 @@ export default function DictionaryPage() {
   }
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 text-center">
           <p className="font-black uppercase tracking-[0.25em] text-blue-500">CHẠM</p>
-          <h1 className="mt-3 text-4xl font-black text-slate-950 sm:text-5xl">Từ điển ký hiệu</h1>
-          <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-slate-600">Tra cứu nhanh từ vựng, cụm từ và ký hiệu thông dụng trong đời sống hằng ngày.</p>
+          <h1 className="mt-3 text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Từ điển ký hiệu</h1>
+          <p className="mx-auto mt-4 max-w-3xl text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Tra cứu nhanh từ vựng, cụm từ và ký hiệu thông dụng trong đời sống hằng ngày.</p>
         </div>
 
         <SectionCard className="mb-6">
-          <div className="flex items-center gap-3 rounded-full border border-blue-100 bg-white px-4 py-2 shadow-lg shadow-blue-100/50">
+          <div className="flex items-center gap-3 rounded-[1.5rem] border border-blue-100 bg-white px-4 py-2 shadow-lg shadow-blue-100/50 sm:rounded-full">
             <Search className="h-6 w-6 shrink-0 text-blue-500" aria-hidden="true" />
             <label className="sr-only" htmlFor="dictionary-search">Tìm kiếm từ điển</label>
             <input
@@ -105,7 +105,7 @@ export default function DictionaryPage() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Tìm từ, cụm từ hoặc chủ đề ký hiệu..."
-              className="min-h-12 flex-1 bg-transparent text-base font-semibold text-slate-800 outline-none placeholder:text-slate-400"
+              className="min-h-12 min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 sm:text-base"
             />
           </div>
 
@@ -115,7 +115,7 @@ export default function DictionaryPage() {
             <FilterSelect label="Độ khó" value={difficulty} onChange={setDifficulty} options={["Tất cả", "easy", "medium", "hard"]} getLabel={(value) => value === "Tất cả" ? value : difficultyLabels[value as keyof typeof difficultyLabels]} />
           </div>
 
-          <div className="sticky top-28 z-20 mt-5 flex gap-2 overflow-x-auto rounded-full bg-white/95 py-2 md:hidden">
+          <div className="sticky top-24 z-20 mt-5 flex gap-2 overflow-x-auto rounded-full bg-white/95 py-2 lg:hidden">
             {vietnameseAlphabet.map((letter) => (
               <button key={letter} type="button" disabled={!lettersWithData.has(letter)} onClick={() => scrollToLetter(letter)} className={`h-9 min-w-9 rounded-full text-sm font-black ${lettersWithData.has(letter) ? "bg-blue-50 text-blue-700" : "bg-slate-50 text-slate-300"}`}>
                 {letter}
@@ -126,11 +126,11 @@ export default function DictionaryPage() {
           <p className="mt-5 rounded-2xl bg-blue-50 p-4 text-sm font-semibold leading-6 text-blue-900">Dữ liệu ký hiệu trong từ điển là nội dung minh họa cho demo. Ký hiệu có thể khác nhau theo vùng và cần được xác minh bởi giáo viên hoặc nguồn chuyên môn.</p>
         </SectionCard>
 
-        <div className="grid gap-6 md:grid-cols-[1fr_auto]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto]">
           <div className="space-y-10">
             {filtered.length ? grouped.map((group) => group.items.length ? (
               <section key={group.letter} id={getDictionaryLetterId(group.letter)} className="scroll-mt-36">
-                <h2 className="mb-4 flex items-center gap-3 text-4xl font-black text-blue-700">
+                <h2 className="mb-4 flex items-center gap-3 text-3xl font-black text-blue-700 sm:text-4xl">
                   {group.letter}
                   <span className="h-px flex-1 bg-blue-100" />
                 </h2>
@@ -143,7 +143,7 @@ export default function DictionaryPage() {
             ) : null) : <p className="rounded-3xl bg-blue-50 p-8 text-center text-lg font-bold text-blue-900">Chưa tìm thấy nội dung phù hợp. Hãy thử từ khóa khác.</p>}
           </div>
 
-          <aside className="sticky top-28 hidden h-fit rounded-full border border-blue-100 bg-white p-2 shadow-lg shadow-blue-100/60 md:block" aria-label="Chỉ mục chữ cái">
+          <aside className="sticky top-28 hidden h-fit rounded-full border border-blue-100 bg-white p-2 shadow-lg shadow-blue-100/60 lg:block" aria-label="Chỉ mục chữ cái">
             <div className="grid gap-1">
               {vietnameseAlphabet.map((letter) => (
                 <button key={letter} type="button" disabled={!lettersWithData.has(letter)} onClick={() => scrollToLetter(letter)} className={`grid h-8 w-8 place-items-center rounded-full text-xs font-black transition ${lettersWithData.has(letter) ? "text-blue-700 hover:bg-blue-50" : "text-slate-300"}`}>
@@ -173,10 +173,10 @@ function FilterSelect({ label, value, onChange, options, getLabel }: { label: st
 
 function DictionaryCard({ item, favorite, onFavorite, onOpen }: { item: SignDictionaryItem; favorite: boolean; onFavorite: () => void; onOpen: () => void }) {
   return (
-    <article className="rounded-[1.75rem] border border-blue-100 bg-white p-5 shadow-lg shadow-blue-100/50">
+    <article className="min-w-0 rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50 sm:rounded-[1.75rem] sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-black text-slate-950">{item.word}</h3>
+          <h3 className="break-words text-2xl font-black text-slate-950">{item.word}</h3>
           <p className="mt-2 leading-7 text-slate-600">{item.meaning}</p>
         </div>
         <button type="button" onClick={onFavorite} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100" aria-label={favorite ? `Bỏ yêu thích ${item.word}` : `Lưu yêu thích ${item.word}`}>
@@ -190,7 +190,7 @@ function DictionaryCard({ item, favorite, onFavorite, onOpen }: { item: SignDict
       </div>
       <p className="mt-4 rounded-2xl bg-slate-50 p-4 font-semibold text-slate-700">{item.exampleSentence}</p>
       <MediaPlaceholder />
-      <Button onClick={onOpen} className="mt-4 rounded-full">Xem ký hiệu</Button>
+      <Button onClick={onOpen} className="mt-4 w-full rounded-full sm:w-auto">Xem ký hiệu</Button>
     </article>
   );
 }
@@ -209,12 +209,12 @@ function SignDetailModal({ item, onClose, onFavorite, onLearned }: { item: SignD
     <Dialog.Root open={Boolean(item)} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-950/50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-100">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[calc(100%-1rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[1.5rem] bg-white p-4 shadow-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 sm:w-[calc(100%-2rem)] sm:rounded-[2rem] sm:p-6">
           {item ? (
             <div className="grid gap-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <Dialog.Title className="text-4xl font-black text-blue-700">{item.word}</Dialog.Title>
+                  <Dialog.Title className="text-3xl font-black text-blue-700 sm:text-4xl">{item.word}</Dialog.Title>
                   <Dialog.Description className="mt-2 text-lg leading-8 text-slate-600">{item.meaning}</Dialog.Description>
                 </div>
                 <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 text-slate-700"><X className="h-5 w-5" /></button>

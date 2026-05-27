@@ -27,14 +27,14 @@ export default function AlphabetCoursePage() {
   }
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-black text-slate-950">Ký hiệu bảng chữ cái</h1>
-          <p className="mt-4 text-lg font-semibold leading-8 text-slate-600">Học ký hiệu từng chữ cái để làm nền tảng cho việc ghép từ.</p>
+          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ký hiệu bảng chữ cái</h1>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Học ký hiệu từng chữ cái để làm nền tảng cho việc ghép từ.</p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-8 grid grid-cols-1 gap-4 min-[390px]:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           {letters.map((letter) => (
             <article key={letter} className="rounded-[1.75rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50">
               <div className="flex items-start justify-between gap-3">
@@ -48,12 +48,12 @@ export default function AlphabetCoursePage() {
                 <p className="font-black text-blue-800">GIF/Video minh họa ký hiệu chữ {letter}</p>
                 <p className="mt-2 text-xs font-semibold text-slate-500">Nội dung minh họa sẽ được nhóm bổ sung hoặc xác minh ở giai đoạn sau.</p>
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Button variant="secondary" className="rounded-full" onClick={() => openDetail(letter)}>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <Button variant="secondary" className="w-full rounded-full" onClick={() => openDetail(letter)}>
                   <Eye className="h-4 w-4" aria-hidden="true" />
                   Xem ký hiệu
                 </Button>
-                <Button className="rounded-full" onClick={() => markLearned(letter)}>
+                <Button className="w-full rounded-full" onClick={() => markLearned(letter)}>
                   Đã học
                 </Button>
               </div>
@@ -63,12 +63,12 @@ export default function AlphabetCoursePage() {
       </section>
 
       {selectedLetter ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/40 px-4">
-          <section className="w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/40 px-3">
+          <section className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-[1.5rem] bg-white p-4 shadow-2xl sm:rounded-[2rem] sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-black uppercase text-blue-600">Chi tiết ký hiệu</p>
-                <h2 className="mt-1 text-4xl font-black text-slate-950">Chữ {selectedLetter}</h2>
+                <h2 className="mt-1 text-3xl font-black text-slate-950 sm:text-4xl">Chữ {selectedLetter}</h2>
               </div>
               <Button variant="ghost" className="h-11 w-11 rounded-full p-0" onClick={() => setSelectedLetter(null)} aria-label="Đóng">
                 <X className="h-5 w-5" aria-hidden="true" />
@@ -79,11 +79,11 @@ export default function AlphabetCoursePage() {
               <p className="mt-2 text-sm font-semibold text-slate-500">Minh họa cách tạo ký hiệu cho chữ này sẽ được nhóm bổ sung sau.</p>
             </div>
             <p className="mt-4 rounded-2xl bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-900">Ký hiệu minh họa trong bản demo cần được xác minh bởi nguồn chuyên môn.</p>
-            <div className="mt-5 flex flex-wrap justify-end gap-2">
-              <Button variant="outline" className="rounded-full" onClick={() => setSelectedLetter(null)}>
+            <div className="mt-5 grid gap-2 sm:flex sm:justify-end">
+              <Button variant="outline" className="w-full rounded-full sm:w-auto" onClick={() => setSelectedLetter(null)}>
                 Đóng
               </Button>
-              <Button className="rounded-full" onClick={() => markLearned(selectedLetter)}>
+              <Button className="w-full rounded-full sm:w-auto" onClick={() => markLearned(selectedLetter)}>
                 Đã học
               </Button>
             </div>

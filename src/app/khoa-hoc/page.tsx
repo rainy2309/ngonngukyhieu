@@ -36,15 +36,15 @@ const courses = [
 
 export default function CoursesPage() {
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-black text-blue-800">
             <BookOpen className="h-4 w-4" aria-hidden="true" />
             Lộ trình học CHẠM
           </div>
-          <h1 className="text-4xl font-black text-slate-950 md:text-5xl">Khóa học</h1>
-          <p className="mt-4 text-lg font-semibold leading-8 text-slate-600">Học ký hiệu theo từng cấp độ: từ bảng chữ cái, ghép từ, ghép câu đến ngữ pháp ký hiệu.</p>
+          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Khóa học</h1>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Học ký hiệu theo từng cấp độ: từ bảng chữ cái, ghép từ, ghép câu đến ngữ pháp ký hiệu.</p>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
@@ -58,7 +58,7 @@ export default function CoursesPage() {
                   <h2 className="text-2xl font-black text-slate-950">{course.title}</h2>
                   <p className="mt-2 min-h-16 font-semibold leading-7 text-slate-600">{course.description}</p>
                 </div>
-                <Button asChild className="w-fit rounded-full">
+                <Button asChild className="w-full rounded-full sm:w-fit">
                   <Link href={course.href}>{course.button}</Link>
                 </Button>
               </CardContent>

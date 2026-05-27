@@ -72,11 +72,11 @@ export default function SentenceBuilderPage() {
   const words = splitSentence(submittedSentence);
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-black text-slate-950">Ghép câu</h1>
-          <p className="mt-4 text-lg font-semibold leading-8 text-slate-600">Luyện ghép các từ thành câu giao tiếp thường dùng trong đời sống.</p>
+          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ghép câu</h1>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Luyện ghép các từ thành câu giao tiếp thường dùng trong đời sống.</p>
         </div>
 
         <div className="mt-8 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-xl shadow-blue-100/50 md:p-6">
@@ -84,7 +84,7 @@ export default function SentenceBuilderPage() {
             <span className="font-black text-slate-900">Nhập câu muốn luyện</span>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Input value={sentence} onChange={(event) => setSentence(event.target.value)} placeholder="Ví dụ: Cảm ơn bạn." className="min-h-12 text-base" />
-              <Button onClick={() => practice()} className="min-h-12 rounded-full">
+              <Button onClick={() => practice()} className="min-h-12 w-full rounded-full sm:w-auto">
                 <MessageSquareText className="h-5 w-5" aria-hidden="true" />
                 Ghép câu
               </Button>
@@ -94,12 +94,12 @@ export default function SentenceBuilderPage() {
 
         <section className="mt-8">
           <h2 className="text-2xl font-black text-slate-950">Phân tách câu</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {words.map((word, index) => {
               const meaning = knownMeanings[normalize(word)];
               return (
-                <article key={`${word}-${index}`} className="rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50">
-                  <p className="text-2xl font-black text-blue-700">{word}</p>
+                <article key={`${word}-${index}`} className="min-w-0 rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-lg shadow-blue-100/50">
+                  <p className="break-words text-2xl font-black text-blue-700">{word}</p>
                   <p className="mt-2 min-h-12 text-sm font-semibold leading-6 text-slate-600">{meaning ?? "Chưa có dữ liệu ký hiệu cho từ này trong MVP."}</p>
                   <div className="mt-4 aspect-video rounded-2xl border border-dashed border-blue-200 bg-blue-50 p-3 text-center">
                     <p className="text-sm font-black text-blue-800">GIF/Video minh họa ký hiệu</p>
@@ -123,7 +123,7 @@ export default function SentenceBuilderPage() {
                 <div className="mt-4 aspect-video rounded-2xl border border-dashed border-blue-200 bg-blue-50 p-3 text-center">
                   <p className="font-black text-blue-800">GIF/Video minh họa ký hiệu</p>
                 </div>
-                <Button variant="secondary" className="mt-4 rounded-full" onClick={() => practice(card.sentence)}>
+                <Button variant="secondary" className="mt-4 w-full rounded-full sm:w-auto" onClick={() => practice(card.sentence)}>
                   Luyện câu này
                 </Button>
               </article>

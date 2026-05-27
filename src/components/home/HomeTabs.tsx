@@ -13,7 +13,7 @@ const tabs = [
   { id: "vocab", label: "Từ vựng", icon: Layers },
   { id: "board", label: "Bảng", icon: Grid3X3 },
   { id: "practice", label: "Luyện tập", icon: ClipboardCheck },
-  { id: "lessons", label: "Học ký hiệu", icon: BookOpen },
+  { id: "lessons", label: "Khóa học", icon: BookOpen },
   { id: "favorites", label: "Yêu thích", icon: Bookmark },
 ];
 
@@ -29,14 +29,16 @@ export function HomeTabs() {
   }, []);
 
   return (
-    <SectionCard className="mx-auto mt-12 max-w-6xl">
-      <div className="mb-7 flex gap-3 overflow-x-auto border-b border-blue-100">
+    <SectionCard className="mx-auto mt-8 max-w-6xl sm:mt-12">
+      <div className="mb-5 flex gap-2 overflow-x-auto border-b border-blue-100 pb-1 sm:mb-7 sm:gap-3">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`flex min-h-12 items-center gap-2 whitespace-nowrap border-b-2 px-3 text-base font-black transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 ${activeTab === tab.id ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:text-blue-600"}`}
+            className={`flex min-h-12 shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 sm:text-base ${
+              activeTab === tab.id ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:text-blue-600"
+            }`}
           >
             <tab.icon className="h-5 w-5" aria-hidden="true" />
             {tab.label}
@@ -47,14 +49,18 @@ export function HomeTabs() {
       {activeTab === "vocab" ? (
         <div className="space-y-6">
           <VocabGrid items={previewWords as typeof vocabularyData} compact />
-          <div className="text-center"><Button asChild className="rounded-full px-7"><Link href="/hoc-ky-hieu">Xem tất cả từ vựng</Link></Button></div>
+          <div className="text-center">
+            <Button asChild className="w-full rounded-full px-7 sm:w-auto">
+              <Link href="/tu-dien">Xem tất cả từ vựng</Link>
+            </Button>
+          </div>
         </div>
       ) : null}
 
       {activeTab === "board" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.slice(0, 6).map((category) => (
-            <Link key={category} href={`/hoc-ky-hieu?category=${encodeURIComponent(category)}`} className="rounded-3xl bg-blue-50 p-6 font-black text-blue-900 shadow-sm transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">
+            <Link key={category} href={`/tu-dien?category=${encodeURIComponent(category)}`} className="rounded-3xl bg-blue-50 p-5 font-black text-blue-900 shadow-sm transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 sm:p-6">
               {category}
               <p className="mt-2 text-sm font-semibold text-blue-700">Khám phá nhóm từ vựng</p>
             </Link>
@@ -63,15 +69,19 @@ export function HomeTabs() {
       ) : null}
 
       {activeTab === "practice" ? (
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {["Chọn nghĩa đúng", "Nhận diện qua minh họa", "Ghép với chủ đề"].map((title) => (
-            <div key={title} className="rounded-3xl bg-blue-50 p-6">
+            <div key={title} className="rounded-3xl bg-blue-50 p-5 sm:p-6">
               <ClipboardCheck className="mb-4 h-8 w-8 text-blue-600" aria-hidden="true" />
-              <h3 className="text-xl font-black text-slate-950">{title}</h3>
-              <p className="mt-2 text-slate-600">Luyện tập nhanh với dữ liệu minh họa.</p>
+              <h3 className="text-lg font-black text-slate-950 sm:text-xl">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">Luyện tập nhanh với dữ liệu minh họa.</p>
             </div>
           ))}
-          <div className="md:col-span-3"><Button asChild className="rounded-full px-7"><Link href="/quiz">Bắt đầu luyện tập</Link></Button></div>
+          <div className="md:col-span-3">
+            <Button asChild className="w-full rounded-full px-7 sm:w-auto">
+              <Link href="/quiz">Bắt đầu luyện tập</Link>
+            </Button>
+          </div>
         </div>
       ) : null}
 
@@ -79,18 +89,22 @@ export function HomeTabs() {
         <div className="grid gap-4 md:grid-cols-2">
           {lessons.slice(0, 4).map((lesson) => (
             <div key={lesson.id} className="rounded-3xl border border-blue-100 p-5">
-              <h3 className="text-xl font-black text-slate-950">{lesson.topic}</h3>
-              <p className="mt-2 leading-7 text-slate-600">{lesson.description}</p>
+              <h3 className="text-lg font-black text-slate-950 sm:text-xl">{lesson.topic}</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600 sm:text-base">{lesson.description}</p>
             </div>
           ))}
-          <div className="md:col-span-2"><Button asChild className="rounded-full px-7"><Link href="/hoc-ky-hieu">Xem bài học</Link></Button></div>
+          <div className="md:col-span-2">
+            <Button asChild className="w-full rounded-full px-7 sm:w-auto">
+              <Link href="/khoa-hoc">Xem khóa học</Link>
+            </Button>
+          </div>
         </div>
       ) : null}
 
       {activeTab === "favorites" ? (
-        <div className="rounded-3xl bg-blue-50 p-8 text-center">
+        <div className="rounded-3xl bg-blue-50 p-6 text-center sm:p-8">
           <Bookmark className="mx-auto mb-4 h-10 w-10 text-blue-600" aria-hidden="true" />
-          <p className="text-lg font-bold text-blue-900">{isLoggedIn ? "Các từ đã lưu sẽ được hiển thị tại đây trong bản mở rộng." : "Đăng nhập để lưu từ yêu thích."}</p>
+          <p className="text-base font-bold text-blue-900 sm:text-lg">{isLoggedIn ? "Các từ đã lưu sẽ được hiển thị tại đây trong bản mở rộng." : "Đăng nhập để lưu từ yêu thích."}</p>
         </div>
       ) : null}
     </SectionCard>

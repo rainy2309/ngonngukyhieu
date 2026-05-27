@@ -12,21 +12,23 @@ const articles = [
 
 export default function CommunityPage() {
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10">
-          <p className="font-black uppercase tracking-[0.25em] text-blue-500">Cộng đồng</p>
-          <h1 className="mt-3 text-4xl font-black text-slate-950 sm:text-5xl">Hiểu để chạm gần hơn</h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">Góc kiến thức CHẠM chia sẻ các gợi ý giao tiếp tích cực với cộng đồng người điếc và khiếm thính.</p>
+        <div className="mb-8 sm:mb-10">
+          <p className="font-black uppercase text-blue-500">Cộng đồng</p>
+          <h1 className="mt-3 text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Hiểu để chạm gần hơn</h1>
+          <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">
+            Góc kiến thức CHẠM chia sẻ các gợi ý giao tiếp tích cực với cộng đồng người điếc và khiếm thính.
+          </p>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {articles.map((article) => (
             <SectionCard key={article.title}>
               <div className="mb-5 grid h-14 w-14 place-items-center rounded-3xl bg-blue-50 text-blue-600">
                 <article.icon aria-hidden="true" />
               </div>
-              <h2 className="text-2xl font-black text-slate-950">{article.title}</h2>
-              <p className="mt-3 leading-8 text-slate-600">{article.text}</p>
+              <h2 className="text-xl font-black text-slate-950 sm:text-2xl">{article.title}</h2>
+              <p className="mt-3 text-sm font-semibold leading-7 text-slate-600 sm:text-base sm:leading-8">{article.text}</p>
             </SectionCard>
           ))}
         </div>

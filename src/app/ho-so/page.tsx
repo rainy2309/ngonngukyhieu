@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Award, BookOpen, CalendarDays, Heart, Save, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
+import { Award, BookOpen, Heart, Save, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,8 +31,8 @@ function RecentList({ items, emptyText }: { items: StoredLearningItem[]; emptyTe
   return (
     <div className="grid gap-2">
       {items.slice(0, 5).map((item) => (
-        <div key={item.id} className="flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3">
-          <span className="font-bold text-slate-800">{item.label}</span>
+        <div key={item.id} className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3">
+          <span className="min-w-0 break-words font-bold text-slate-800">{item.label}</span>
           <span className="whitespace-nowrap text-xs font-bold text-blue-700">{new Date(item.updatedAt).toLocaleDateString("vi-VN")}</span>
         </div>
       ))}
@@ -139,12 +139,12 @@ export default function ProfilePage() {
   ];
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-6 sm:gap-8">
         <section>
           <p className="text-sm font-black uppercase text-blue-600">Khu vực cá nhân</p>
-          <h1 className="mt-2 text-4xl font-black text-slate-950">Hồ sơ học tập</h1>
-          <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-slate-600">Theo dõi nhật ký học ký hiệu, từ yêu thích và thông tin tài khoản CHẠM của bạn.</p>
+          <h1 className="mt-2 text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Hồ sơ học tập</h1>
+          <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Theo dõi nhật ký học ký hiệu, từ yêu thích và thông tin tài khoản CHẠM của bạn.</p>
         </section>
 
         <section className="grid gap-5">
@@ -153,7 +153,7 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-black text-slate-950">Nhật ký học tập</h2>
               <p className="mt-1 font-semibold text-slate-600">Dữ liệu MVP được lưu trên trình duyệt và điểm luyện tập có thể đồng bộ Supabase nếu đã kết nối.</p>
             </div>
-            <Button asChild className="rounded-full">
+            <Button asChild className="w-full rounded-full sm:w-auto">
               <Link href="/khoa-hoc">Tiếp tục học</Link>
             </Button>
           </div>
@@ -213,12 +213,12 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <Card className="rounded-[2rem] border-blue-100 shadow-xl shadow-blue-100/60">
+        <Card className="rounded-[1.5rem] border-blue-100 shadow-xl shadow-blue-100/60 sm:rounded-[2rem]">
           <CardHeader>
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
               <UserRound aria-hidden="true" />
             </div>
-            <CardTitle className="text-3xl">Thông tin tài khoản</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">Thông tin tài khoản</CardTitle>
             <p className="text-slate-600">Quản lý thông tin cơ bản dùng cho CHẠM.</p>
           </CardHeader>
           <CardContent>
@@ -229,7 +229,7 @@ export default function ProfilePage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="grid gap-2">
                     <span className="font-bold text-slate-800">Email / Gmail</span>
-                    <Input value={email} disabled />
+                    <Input value={email} disabled className="break-all" />
                   </label>
                   <label className="grid gap-2">
                     <span className="font-bold text-slate-800">Ngày tham gia</span>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
                   </select>
                 </label>
                 {message ? <p className="rounded-2xl bg-blue-50 p-3 font-semibold text-blue-900">{message}</p> : null}
-                <Button type="submit" disabled={saving || !userId} className="rounded-full">
+                <Button type="submit" disabled={saving || !userId} className="w-full rounded-full sm:w-auto">
                   <Save className="h-5 w-5" aria-hidden="true" />
                   {saving ? "Đang lưu..." : "Lưu hồ sơ"}
                 </Button>

@@ -16,22 +16,28 @@ export function SearchBar({
 }) {
   return (
     <form
-      className="mx-auto flex w-full max-w-4xl items-center gap-2 rounded-full border border-blue-100 bg-white p-2 shadow-xl shadow-blue-100/70"
+      className="mx-auto grid w-full max-w-4xl gap-3 rounded-[1.75rem] border border-blue-100 bg-white p-3 shadow-xl shadow-blue-100/70 sm:flex sm:items-center sm:rounded-full sm:gap-2 sm:p-2"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit?.();
       }}
     >
-      <Search className="ml-4 h-6 w-6 shrink-0 text-blue-500" aria-hidden="true" />
-      <label className="sr-only" htmlFor="cham-search">Tìm kiếm</label>
-      <input
-        id="cham-search"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="min-h-12 flex-1 bg-transparent text-base font-medium text-slate-800 outline-none placeholder:text-slate-400"
-      />
-      <Button type="submit" className="rounded-full px-6">Tìm kiếm</Button>
+      <div className="flex min-w-0 flex-1 items-center gap-3 rounded-full bg-blue-50/60 px-3 sm:bg-transparent">
+        <Search className="h-5 w-5 shrink-0 text-blue-500 sm:ml-2 sm:h-6 sm:w-6" aria-hidden="true" />
+        <label className="sr-only" htmlFor="cham-search">
+          Tìm kiếm
+        </label>
+        <input
+          id="cham-search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          className="min-h-12 min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400 sm:text-base"
+        />
+      </div>
+      <Button type="submit" className="min-h-12 w-full rounded-full px-6 sm:w-auto">
+        Tìm kiếm
+      </Button>
     </form>
   );
 }

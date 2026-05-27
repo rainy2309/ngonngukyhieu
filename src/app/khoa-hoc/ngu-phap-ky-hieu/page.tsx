@@ -43,18 +43,18 @@ const sources = [
 
 export default function SignGrammarPage() {
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex-1 bg-gradient-to-b from-blue-50 via-white to-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <section className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-black text-slate-950">Ngữ pháp ký hiệu</h1>
-          <p className="mt-4 text-lg font-semibold leading-8 text-slate-600">Tìm hiểu một số đặc điểm cơ bản khi biểu đạt ý nghĩa bằng ngôn ngữ ký hiệu.</p>
+          <h1 className="text-3xl font-black text-slate-950 sm:text-4xl lg:text-5xl">Ngữ pháp ký hiệu</h1>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600 sm:text-lg sm:leading-8">Tìm hiểu một số đặc điểm cơ bản khi biểu đạt ý nghĩa bằng ngôn ngữ ký hiệu.</p>
         </div>
 
         <p className="mt-6 rounded-[1.5rem] bg-orange-50 p-5 font-semibold leading-7 text-orange-900">
           Nội dung ngữ pháp trong bản demo cần được nhóm đối chiếu lại với giáo viên, cộng đồng người điếc hoặc tài liệu chuyên môn.
         </p>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
           {sections.map((section) => (
             <article key={section.title} className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-100/50">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
