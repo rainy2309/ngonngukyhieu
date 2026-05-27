@@ -55,29 +55,29 @@ export function AuthNav() {
 
   if (user) {
     return (
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="hidden max-w-40 truncate text-sm font-bold text-slate-600 xl:inline">{user.name || user.email}</span>
-        <Button asChild variant="secondary" size="sm">
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="hidden max-w-40 truncate whitespace-nowrap text-sm font-bold text-slate-600 xl:inline">{user.name || user.email}</span>
+        <Button asChild variant="secondary" size="sm" className="whitespace-nowrap">
           <Link href="/ho-so">
             <UserRound className="h-4 w-4" aria-hidden="true" />
             Hồ sơ
           </Link>
         </Button>
-        <Button variant="outline" size="sm" onClick={logout}>
+        <Button variant="outline" size="sm" onClick={logout} className="whitespace-nowrap">
           <LogOut className="h-4 w-4" aria-hidden="true" />
           Đăng xuất
         </Button>
-        {message ? <span className="text-xs font-bold text-orange-700">{message}</span> : null}
+        {message ? <span className="max-w-44 text-xs font-bold text-orange-700">{message}</span> : null}
       </div>
     );
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button asChild variant="secondary" size="sm">
+    <div className="flex shrink-0 items-center gap-2">
+      <Button asChild variant="secondary" size="sm" className="whitespace-nowrap">
         <Link href="/dang-nhap">Đăng nhập</Link>
       </Button>
-      <Button asChild size="sm">
+      <Button asChild size="sm" className="whitespace-nowrap">
         <Link href="/dang-ky">Đăng ký</Link>
       </Button>
     </div>

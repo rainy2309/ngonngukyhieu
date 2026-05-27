@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Save, UserRound } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { Award, BookOpen, CalendarDays, Heart, Save, Sparkles, UserRound, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, hasSupabaseEnv, missingEnvMessage } from "@/lib/supabase/client";
+import { getBestQuizScore } from "@/lib/quiz";
+import { learningStorageKeys, readBestQuizScore, readLearningItems, type StoredLearningItem } from "@/lib/localLearning";
 
 const roleLabels: Record<string, string> = {
   learner: "Người học",
@@ -13,19 +16,59 @@ const roleLabels: Record<string, string> = {
   teacher: "Giáo viên / chuyên môn",
 };
 
+const continuingCourses = [
+  { title: "Chào hỏi cơ bản", href: "/khoa-hoc/ghep-cau" },
+  { title: "Gia đình", href: "/tu-dien" },
+  { title: "Số đếm", href: "/khoa-hoc/bang-chu-cai" },
+  { title: "Cảm xúc", href: "/khoa-hoc/ghep-tu" },
+];
+
+function RecentList({ items, emptyText }: { items: StoredLearningItem[]; emptyText: string }) {
+  if (!items.length) {
+    return <p className="rounded-3xl bg-slate-50 p-4 text-sm font-semibold text-slate-500">{emptyText}</p>;
+  }
+
+  return (
+    <div className="grid gap-2">
+      {items.slice(0, 5).map((item) => (
+        <div key={item.id} className="flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3">
+          <span className="font-bold text-slate-800">{item.label}</span>
+          <span className="whitespace-nowrap text-xs font-bold text-blue-700">{new Date(item.updatedAt).toLocaleDateString("vi-VN")}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("learner");
+  const [joinedAt, setJoinedAt] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profileTableReady, setProfileTableReady] = useState(true);
+  const [learnedSigns, setLearnedSigns] = useState<StoredLearningItem[]>([]);
+  const [favoriteSigns, setFavoriteSigns] = useState<StoredLearningItem[]>([]);
+  const [viewedLessons, setViewedLessons] = useState<StoredLearningItem[]>([]);
+  const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
+    setLearnedSigns(readLearningItems(learningStorageKeys.learned));
+    setFavoriteSigns(readLearningItems(learningStorageKeys.favorites));
+    setViewedLessons(readLearningItems(learningStorageKeys.viewedLessons));
+    setBestScore(readBestQuizScore());
+
     async function loadProfile() {
       try {
+        if (!hasSupabaseEnv()) {
+          setMessage(missingEnvMessage);
+          setProfileTableReady(false);
+          return;
+        }
+
         const supabase = createClient();
         const {
           data: { user },
@@ -40,15 +83,21 @@ export default function ProfilePage() {
         setEmail(user.email ?? "");
         setFullName(String(user.user_metadata.full_name ?? ""));
         setRole(String(user.user_metadata.role ?? "learner"));
+        setJoinedAt(user.created_at ?? "");
 
-        const { data, error } = await supabase.from("profiles").select("full_name,role").eq("id", user.id).maybeSingle();
+        const supabaseBestScore = await getBestQuizScore();
+        setBestScore((current) => Math.max(current, supabaseBestScore));
+
+        const { data, error } = await supabase.from("profiles").select("full_name,role,created_at").eq("id", user.id).maybeSingle();
         if (error) {
           setProfileTableReady(false);
           setMessage("Chưa kết nối bảng hồ sơ. Thông tin đang hiển thị từ tài khoản đăng nhập.");
           return;
         }
+
         setFullName(data?.full_name ?? String(user.user_metadata.full_name ?? ""));
         setRole(data?.role ?? String(user.user_metadata.role ?? "learner"));
+        setJoinedAt(data?.created_at ?? user.created_at ?? "");
       } catch {
         setMessage("Chưa kết nối bảng hồ sơ. Thông tin đang hiển thị từ tài khoản đăng nhập.");
         setProfileTableReady(false);
@@ -56,8 +105,11 @@ export default function ProfilePage() {
         setLoading(false);
       }
     }
+
     void loadProfile();
   }, []);
+
+  const hasJournal = useMemo(() => learnedSigns.length + favoriteSigns.length + viewedLessons.length + bestScore > 0, [bestScore, favoriteSigns.length, learnedSigns.length, viewedLessons.length]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,31 +131,139 @@ export default function ProfilePage() {
     }
   }
 
+  const statCards = [
+    { title: "Từ đã học", value: learnedSigns.length, icon: CheckCircle2 },
+    { title: "Từ yêu thích", value: favoriteSigns.length, icon: Heart },
+    { title: "Bài học đã xem", value: viewedLessons.length, icon: BookOpen },
+    { title: "Điểm luyện tập cao nhất", value: bestScore, icon: Award },
+  ];
+
   return (
-    <main className="grid flex-1 place-items-center bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-3xl rounded-[2rem] border-blue-100 shadow-xl shadow-blue-100/60">
-        <CardHeader>
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700"><UserRound aria-hidden="true" /></div>
-          <CardTitle className="text-3xl">Hồ sơ học tập</CardTitle>
-          <p className="text-slate-600">Quản lý thông tin cơ bản dùng cho CHẠM.</p>
-        </CardHeader>
-        <CardContent>
-          {loading ? <p className="text-slate-600">Đang tải hồ sơ...</p> : (
-            <form className="grid gap-4" onSubmit={onSubmit}>
-              <label className="grid gap-2"><span className="font-bold text-slate-800">Email</span><Input value={email} disabled /></label>
-              <label className="grid gap-2"><span className="font-bold text-slate-800">Họ tên</span><Input value={fullName} onChange={(event) => setFullName(event.target.value)} required /></label>
-              <label className="grid gap-2">
-                <span className="font-bold text-slate-800">Vai trò</span>
-                <select value={role} onChange={(event) => setRole(event.target.value)} className="min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-100">
-                  {Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </select>
-              </label>
-              {message ? <p className="rounded-2xl bg-blue-50 p-3 font-semibold text-blue-900">{message}</p> : null}
-              <Button type="submit" disabled={saving || !userId} className="rounded-full"><Save className="h-5 w-5" aria-hidden="true" />{saving ? "Đang lưu..." : "Lưu hồ sơ"}</Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8">
+        <section>
+          <p className="text-sm font-black uppercase text-blue-600">Khu vực cá nhân</p>
+          <h1 className="mt-2 text-4xl font-black text-slate-950">Hồ sơ học tập</h1>
+          <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-slate-600">Theo dõi nhật ký học ký hiệu, từ yêu thích và thông tin tài khoản CHẠM của bạn.</p>
+        </section>
+
+        <section className="grid gap-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950">Nhật ký học tập</h2>
+              <p className="mt-1 font-semibold text-slate-600">Dữ liệu MVP được lưu trên trình duyệt và điểm luyện tập có thể đồng bộ Supabase nếu đã kết nối.</p>
+            </div>
+            <Button asChild className="rounded-full">
+              <Link href="/khoa-hoc">Tiếp tục học</Link>
+            </Button>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {statCards.map((card) => (
+              <Card key={card.title} className="rounded-[1.5rem] border-blue-100 shadow-lg shadow-blue-100/50">
+                <CardContent className="flex items-center justify-between gap-4 p-5">
+                  <div>
+                    <p className="text-sm font-black text-slate-500">{card.title}</p>
+                    <p className="mt-2 text-4xl font-black text-blue-700">{card.value}</p>
+                  </div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+                    <card.icon aria-hidden="true" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {!hasJournal ? (
+            <div className="rounded-[2rem] border border-dashed border-blue-200 bg-white p-6 text-center shadow-lg shadow-blue-100/40">
+              <Sparkles className="mx-auto h-10 w-10 text-blue-700" aria-hidden="true" />
+              <p className="mt-3 text-lg font-black text-slate-900">Bạn chưa có nhật ký học tập. Hãy bắt đầu với Từ điển hoặc Khóa học.</p>
+            </div>
+          ) : null}
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Card className="rounded-[1.75rem] border-blue-100 shadow-lg shadow-blue-100/50">
+              <CardHeader>
+                <CardTitle>Từ đã học gần đây</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecentList items={learnedSigns} emptyText="Bạn chưa đánh dấu từ nào là đã học." />
+              </CardContent>
+            </Card>
+            <Card className="rounded-[1.75rem] border-blue-100 shadow-lg shadow-blue-100/50">
+              <CardHeader>
+                <CardTitle>Từ yêu thích gần đây</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecentList items={favoriteSigns} emptyText="Bạn chưa lưu từ yêu thích nào." />
+              </CardContent>
+            </Card>
+            <Card className="rounded-[1.75rem] border-blue-100 shadow-lg shadow-blue-100/50">
+              <CardHeader>
+                <CardTitle>Khóa học đang tiếp tục</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                {continuingCourses.map((course) => (
+                  <Link key={course.title} href={course.href} className="rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-3 font-bold text-blue-800 hover:bg-blue-100">
+                    {course.title}
+                  </Link>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <Card className="rounded-[2rem] border-blue-100 shadow-xl shadow-blue-100/60">
+          <CardHeader>
+            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <UserRound aria-hidden="true" />
+            </div>
+            <CardTitle className="text-3xl">Thông tin tài khoản</CardTitle>
+            <p className="text-slate-600">Quản lý thông tin cơ bản dùng cho CHẠM.</p>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-slate-600">Đang tải hồ sơ...</p>
+            ) : (
+              <form className="grid gap-4" onSubmit={onSubmit}>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label className="grid gap-2">
+                    <span className="font-bold text-slate-800">Email / Gmail</span>
+                    <Input value={email} disabled />
+                  </label>
+                  <label className="grid gap-2">
+                    <span className="font-bold text-slate-800">Ngày tham gia</span>
+                    <Input value={joinedAt ? new Date(joinedAt).toLocaleDateString("vi-VN") : "Chưa có dữ liệu"} disabled />
+                  </label>
+                </div>
+                <label className="grid gap-2">
+                  <span className="font-bold text-slate-800">Họ tên</span>
+                  <Input value={fullName} onChange={(event) => setFullName(event.target.value)} required />
+                </label>
+                <label className="grid gap-2">
+                  <span className="font-bold text-slate-800">Vai trò</span>
+                  <select
+                    value={role}
+                    onChange={(event) => setRole(event.target.value)}
+                    className="min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-100"
+                  >
+                    {Object.entries(roleLabels).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {message ? <p className="rounded-2xl bg-blue-50 p-3 font-semibold text-blue-900">{message}</p> : null}
+                <Button type="submit" disabled={saving || !userId} className="rounded-full">
+                  <Save className="h-5 w-5" aria-hidden="true" />
+                  {saving ? "Đang lưu..." : "Lưu hồ sơ"}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

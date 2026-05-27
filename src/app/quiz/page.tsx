@@ -65,7 +65,7 @@ export default function QuizPage() {
       <main className="flex-1 bg-gradient-to-b from-blue-50 to-white px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="mb-8 text-center">
-            <p className="font-black uppercase tracking-[0.25em] text-blue-500">Quiz CHẠM</p>
+            <p className="font-black uppercase tracking-[0.25em] text-blue-500">Luyện tập CHẠM</p>
             <h1 className="mt-3 text-4xl font-black text-slate-950 sm:text-5xl">Ôn tập bằng câu hỏi nhanh</h1>
             <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-600">Chọn chủ đề, trả lời trắc nghiệm và lưu điểm học tập khi đăng nhập.</p>
           </div>
@@ -74,7 +74,7 @@ export default function QuizPage() {
             <div className="grid gap-4">
               <label><span className="mb-2 block font-bold">Chủ đề</span><select value={category} onChange={(event) => setCategory(event.target.value)} className="min-h-12 w-full rounded-xl border border-blue-100 px-4 font-semibold outline-none focus:ring-4 focus:ring-blue-100"><option>Tất cả</option>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
               <label><span className="mb-2 block font-bold">Số câu hỏi</span><select value={count} onChange={(event) => setCount(Number(event.target.value))} className="min-h-12 w-full rounded-xl border border-blue-100 px-4 font-semibold outline-none focus:ring-4 focus:ring-blue-100"><option value={5}>5 câu</option><option value={6}>6 câu</option><option value={10}>10 câu</option></select></label>
-              <Button onClick={startQuiz} size="lg" className="rounded-full"><Play className="h-5 w-5" /> Bắt đầu Quiz</Button>
+              <Button onClick={startQuiz} size="lg" className="rounded-full"><Play className="h-5 w-5" /> Bắt đầu luyện tập</Button>
             </div>
           </SectionCard>
         </div>
@@ -94,7 +94,7 @@ export default function QuizPage() {
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div><h1 className="text-4xl font-black text-slate-950">Quiz CHẠM</h1><p className="mt-2 text-slate-600">Câu {index + 1}/{questions.length} · Điểm tạm tính {score}</p></div>
+        <div><h1 className="text-4xl font-black text-slate-950">Luyện tập CHẠM</h1><p className="mt-2 text-slate-600">Câu {index + 1}/{questions.length} · Điểm tạm tính {score}</p></div>
         <Button variant="secondary" onClick={() => setQuestions([])} className="rounded-full">Đổi chủ đề</Button>
       </div>
       <Progress value={(index / questions.length) * 100} className="mb-5" />

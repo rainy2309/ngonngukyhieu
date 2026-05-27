@@ -18,7 +18,7 @@ export function HeroSection() {
           <ChamLogo className="h-9 w-9 shadow-none" />
           <span>Học ký hiệu qua hình ảnh, từ vựng và hoạt động tương tác</span>
         </div>
-        <p className="mb-2 text-3xl font-black text-slate-800 sm:text-5xl">Welcome to</p>
+        <p className="mb-2 text-3xl font-black text-slate-800 sm:text-5xl">Chào mừng đến với</p>
         <h1 className="text-7xl font-black tracking-tight text-blue-600 sm:text-8xl lg:text-9xl">CHẠM</h1>
         <p className="mx-auto mt-5 max-w-3xl text-xl leading-9 text-slate-600 sm:text-2xl">Khám phá từ vựng, học ký hiệu và kết nối trực quan hơn mỗi ngày.</p>
         <div className="mt-8 flex items-center justify-center gap-5 text-blue-300">

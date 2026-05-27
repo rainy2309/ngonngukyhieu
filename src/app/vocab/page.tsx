@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function VocabRedirect() {
-  redirect("/hoc-ky-hieu");
+export default function VocabRedirectPage() {
+  redirect("/khoa-hoc");
 }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function LessonsRedirect() {
-  redirect("/hoc-ky-hieu");
+export default function LessonsRedirectPage() {
+  redirect("/khoa-hoc");
 }
