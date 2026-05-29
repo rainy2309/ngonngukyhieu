@@ -112,8 +112,8 @@ export default function RegisterPage() {
       <Card className="w-full max-w-xl rounded-[1.75rem] border-blue-100 shadow-xl shadow-blue-100/60 sm:rounded-[2rem]">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex items-center justify-center gap-3">
-            <ChamLogo />
-            <span className="text-3xl font-black text-blue-700">CHẠM</span>
+            <ChamLogo className="h-14 w-14" />
+            <span className="text-3xl font-black text-[#2EAFFF] pt-1">CHẠM</span>
           </div>
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
             <UserPlus aria-hidden="true" />

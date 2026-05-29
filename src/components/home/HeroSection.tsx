@@ -16,12 +16,8 @@ export function HeroSection() {
         <path fill="currentColor" d="M0,160L60,154.7C120,149,240,139,360,149.3C480,160,600,192,720,186.7C840,181,960,139,1080,128C1200,117,1320,139,1380,149.3L1440,160L1440,320L0,320Z" />
       </svg>
       <div className="relative mx-auto max-w-5xl text-center">
-        <div className="mx-auto mb-5 flex w-fit max-w-full items-center gap-3 rounded-full bg-white px-3 py-2 text-xs font-bold text-blue-700 shadow-lg shadow-blue-100 sm:mb-6 sm:px-4 sm:text-sm">
-          <ChamLogo className="h-8 w-8 shrink-0 shadow-none sm:h-9 sm:w-9" />
-          <span className="line-clamp-2 text-left sm:text-center">Học ký hiệu qua hình ảnh, từ vựng và hoạt động tương tác</span>
-        </div>
         <p className="mb-2 text-2xl font-black text-slate-800 sm:text-5xl">Chào mừng đến với</p>
-        <h1 className="text-6xl font-black text-blue-600 sm:text-8xl lg:text-9xl">CHẠM</h1>
+        <h1 className="text-6xl font-black text-[#2EAFFF] sm:text-8xl lg:text-9xl">CHẠM</h1>
         <p className="mx-auto mt-4 max-w-3xl text-base font-semibold leading-8 text-slate-600 sm:mt-5 sm:text-2xl sm:leading-9">Khám phá từ vựng, học ký hiệu và kết nối trực quan hơn mỗi ngày.</p>
         <div className="mt-6 flex items-center justify-center gap-4 text-blue-300 sm:mt-8 sm:gap-5">
           <Sparkles className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true" />
