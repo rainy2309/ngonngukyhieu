@@ -6,9 +6,9 @@ export function Footer() {
     <footer className="mt-20 border-t border-blue-100 bg-white">
       <div className="mx-auto grid max-w-7xl gap-5 px-4 py-8 text-slate-600 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-3">
-          <ChamLogo className="h-10 w-10 shadow-none" />
-          <div>
-            <p className="text-xl font-black text-blue-700">CHẠM</p>
+          <ChamLogo className="h-12 w-12 shadow-none sm:h-14 sm:w-14" />
+          <div className="pt-0.5 sm:pt-1">
+            <p className="text-xl font-black text-[#2EAFFF]">CHẠM</p>
             <p className="text-sm font-semibold">Kết nối bằng ngôn ngữ ký hiệu</p>
           </div>
         </div>

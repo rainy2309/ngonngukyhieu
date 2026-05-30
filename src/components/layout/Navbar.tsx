@@ -66,9 +66,9 @@ export function Navbar() {
         aria-label="Điều hướng chính"
       >
         <Link href="/" onClick={closeMenu} className="flex min-w-0 shrink-0 items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">
-          <ChamLogo className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
-          <span className="block min-w-0">
-            <span className="block whitespace-nowrap text-xl font-black leading-none text-blue-700 sm:text-2xl">CHẠM</span>
+          <ChamLogo className="h-14 w-14 shrink-0 sm:h-16 sm:w-16" />
+          <span className="block min-w-0 pt-0.5 sm:pt-1">
+            <span className="block whitespace-nowrap text-xl font-black leading-none text-[#2EAFFF] sm:text-2xl">CHẠM</span>
             <span className="hidden whitespace-nowrap text-xs font-bold text-slate-500 sm:block">Kết nối bằng ngôn ngữ ký hiệu</span>
           </span>
         </Link>
